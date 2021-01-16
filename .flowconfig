@@ -1,0 +1,14 @@
+[ignore]
+<PROJECT_ROOT>/public
+[untyped]
+[include]
+[libs]
+[lints]
+untyped-import=off
+sketchy-null-bool=off
+sketchy-null-string=off
+unclear-type=off
+[options]
+react.runtime=automatic
+[strict]
+[version]
