@@ -4,6 +4,7 @@ import Home from '../pages/Home'
 import PostProvider from './PostContext'
 import Post from '../pages/Post'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import PostContext from './PostContext'
 
 function App() {
   return (

@@ -160,9 +160,9 @@ const fetchToken = async (code) => {
 const getToken = async () => {
   console.log(`token expired? ${tokenExpired()}`)
   let token = getCookieValueByName(tkn_cookie_name)
-  let refreshToken = getRefreshToken()
+  let refresh_token = getRefreshToken()
   if (!tokenExpired()) return token
-  if (tokenExpired() && refreshToken) return await refreshToken(refreshToken)
+  if (tokenExpired() && refresh_token) return await refreshToken(refresh_token)
   init()
 }
 

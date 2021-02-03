@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Box, Typography, Card, CardContent, CardMedia, CardActionArea } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { PostContext } from './PostContext'
 
 const defaultImg = 'https://source.unsplash.com/random'
 const mediaSize = 205
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function headerCard({ datum }) {
+  const { setPost } = useContext(PostContext)
   const [img, setImg] = useState(defaultImg)
   const [_title, _setTitle] = useState()
   const [dest, setDest] = useState('/')
@@ -49,7 +51,7 @@ export default function headerCard({ datum }) {
     }
   }
 
-  //Need to edit the urls in order to not get error when loading the img
+  // Removing 'amp;' is necessary to not get an error when loading an img
   const setImage = (image) => setImg(image.replace(/amp;/g, ''))
 
   //This function calculates which image is best suited for preview
@@ -71,7 +73,12 @@ export default function headerCard({ datum }) {
         }
       }
     }
-    setImage(bestRes.url)
+    //if lower resolution image is not available we grab the original url instead
+    if (bestRes?.url) {
+      setImage(bestRes.url)
+    } else if (datum?.preview?.images[0]?.source[0]?.url) {
+      setImage(datum.preview.images[0].source.url)
+    }
   }
 
   function trimTitle() {
@@ -81,7 +88,7 @@ export default function headerCard({ datum }) {
   }
 
   function handleClick() {
-    // console.log('banana')
+    setPost(datum)
   }
 
   //catch card media error needed
@@ -109,7 +116,3 @@ export default function headerCard({ datum }) {
     </Card>
   )
 }
-
-// ;<Typography className={classes.text} component={Link} to={dest}>
-//   {_title}
-// </Typography>

@@ -51,7 +51,12 @@ export default function Home() {
   // }
 
   //keep posts with preview images only
-  const filterArray = (arr) => arr.filter((x) => !!x?.data?.preview?.images[0]?.source?.url)
+  const filterArray = (arr) =>
+    arr.filter(
+      (x) =>
+        !!x?.data?.preview?.images[0]?.source?.url ||
+        !!x?.data?.preview?.images[0]?.resolutions[0]?.url
+    )
 
   // console.log(headerList[0][2].data.preview.images[0].source.url)
   console.log(headerList)
