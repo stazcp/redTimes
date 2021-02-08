@@ -30,22 +30,11 @@ export default function Post() {
   const [date, setDate] = useState()
   const [img, setImg] = useState(defaultImg)
   const [sub, setSub] = useState()
-  const [dims, setDims] = useState({ width: '80vw', height: '100vh' })
   // let { data } = useParams()
   const [expanded, setExpanded] = useState(false)
-  const maxWidth = window.innerWidth * 0.75
+  const maxWidth = window.innerWidth * 0.7
   console.log(post)
   //set up video support
-
-  const getMeta = (url) => {
-    const img = new Image()
-    img.addEventListener('load', function () {
-      let width = this.naturalWidth > maxWidth ? maxWidth : this.naturalWidth
-      let height = '100vh' //this.naturalHeight
-      setDims({ width, height })
-    })
-    img.src = url
-  }
 
   useEffect(() => {
     init()
@@ -57,22 +46,17 @@ export default function Post() {
     // setImage(post?.preview?.images[0]?.source?.url || defaultImg)
     setImage(post?.url || defaultImg)
     setSub(post?.subreddit)
-    getMeta(post?.url)
   }
 
   const useStyles = makeStyles((theme) => ({
-    root: {},
+    root: {
+      maxWidth: maxWidth,
+    },
     media: {
       objectFit: 'scale-down',
-      backgroundSize: 'contain', //or contain
+      backgroundSize: 'contain',
       backgroundRepeat: 'no-repeat',
-      width: dims.width,
-      // paddingTop: '100%',
-      minHeight: dims.height,
-      // width: '100%',
-      // height: [post?.preview?.images[0]?.source?.height || '100%'],
-      // width: '80vw',
-      // paddingTop: [post?.preview?.images[0]?.source?.height || '100%'],
+      paddingTop: '100%',
     },
     expand: {
       transform: 'rotate(0deg)',
@@ -104,7 +88,7 @@ export default function Post() {
   }
 
   return (
-    <Container maxWidth="md" className={classes.container}>
+    <Container maxWidth="lg" className={classes.container}>
       {!post && <Redirect to="/" />}
 
       <Card className={classes.root}>
