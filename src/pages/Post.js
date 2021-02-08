@@ -23,41 +23,29 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 
 const defaultImg = 'https://source.unsplash.com/random'
-const useStyles = makeStyles((theme) => ({
-  root: {},
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
-  },
-  avatar: {
-    backgroundColor: red[500],
-  },
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    paddingTop: theme.spacing(2),
-  },
-}))
 
 export default function Post() {
   const { post } = useContext(PostContext)
   const [title, setTitle] = useState()
   const [date, setDate] = useState()
   const [img, setImg] = useState(defaultImg)
-  const classes = useStyles()
+  const [sub, setSub] = useState()
+  const [dims, setDims] = useState({ width: '80vw', height: '100vh' })
   // let { data } = useParams()
   const [expanded, setExpanded] = useState(false)
+  const maxWidth = window.innerWidth * 0.75
+  console.log(post)
+  //set up video support
+
+  const getMeta = (url) => {
+    const img = new Image()
+    img.addEventListener('load', function () {
+      let width = this.naturalWidth > maxWidth ? maxWidth : this.naturalWidth
+      let height = '100vh' //this.naturalHeight
+      setDims({ width, height })
+    })
+    img.src = url
+  }
 
   useEffect(() => {
     init()
@@ -66,26 +54,57 @@ export default function Post() {
   const init = () => {
     setTitle(post?.title ? post.title : '')
     setDate(post?.created_utc ? new Date(post.created_utc * 1000) : '')
-    setImage()
+    // setImage(post?.preview?.images[0]?.source?.url || defaultImg)
+    setImage(post?.url || defaultImg)
+    setSub(post?.subreddit)
+    getMeta(post?.url)
   }
 
-  const setImage = () => {
-    if (post?.preview?.images[0]?.source?.url) {
-      let imgUrl = post.preview.images[0].source.url
-      setImg(convertImgUrl(imgUrl))
-    }
-  }
+  const useStyles = makeStyles((theme) => ({
+    root: {},
+    media: {
+      objectFit: 'scale-down',
+      backgroundSize: 'contain', //or contain
+      backgroundRepeat: 'no-repeat',
+      width: dims.width,
+      // paddingTop: '100%',
+      minHeight: dims.height,
+      // width: '100%',
+      // height: [post?.preview?.images[0]?.source?.height || '100%'],
+      // width: '80vw',
+      // paddingTop: [post?.preview?.images[0]?.source?.height || '100%'],
+    },
+    expand: {
+      transform: 'rotate(0deg)',
+      marginLeft: 'auto',
+      transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+      }),
+    },
+    expandOpen: {
+      transform: 'rotate(180deg)',
+    },
+    avatar: {
+      backgroundColor: red[500],
+    },
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      paddingTop: theme.spacing(2),
+    },
+  }))
+  const classes = useStyles()
 
   // Removing 'amp;' is necessary to not get an error when loading an img
-  const convertImgUrl = (image) => setImg(image.replace(/amp;/g, ''))
+  const setImage = (image) => setImg(image.replace(/amp;/g, ''))
 
   const handleExpandClick = () => {
     setExpanded(!expanded)
   }
-  console.log(post)
 
   return (
-    <Container maxWidth="sm" className={classes.container}>
+    <Container maxWidth="md" className={classes.container}>
       {!post && <Redirect to="/" />}
 
       <Card className={classes.root}>
@@ -103,11 +122,10 @@ export default function Post() {
           title={`${title}`}
           subheader={`${date}`}
         />
-        <CardMedia className={classes.media} image={img} title="Paella dish" />
+        <CardMedia className={classes.media} image={img} title={title} />
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
-            AAAThis impressive paella is a perfect party dish and a fun meal to cook together with
-            your guests. Add 1 cup of frozen peas along with the mussels, if you like.
+            Subreddit: {sub}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
